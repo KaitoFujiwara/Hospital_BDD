@@ -11,7 +11,6 @@ public class VentanaPrincipal extends JFrame {
     private final PanelPaciente panelPaciente;
 
     public VentanaPrincipal() {
-
         pacienteControl = new PacienteControl();
         panelPaciente = new PanelPaciente(pacienteControl);
 

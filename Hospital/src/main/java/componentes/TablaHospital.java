@@ -1,12 +1,17 @@
 package componentes;
 
+import java.awt.Font;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 public class TablaHospital extends JTable {
 
     public TablaHospital() {
+        setFont(new Font("Arial", Font.PLAIN, 13));
         setRowHeight(25);
+        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        setFillsViewportHeight(true);
     }
 
     public void establecerColumnas(String[] columnas) {
@@ -18,13 +23,13 @@ public class TablaHospital extends JTable {
         });
     }
 
+    public void agregarFila(Object[] fila) {
+        DefaultTableModel modelo = (DefaultTableModel) getModel();
+        modelo.addRow(fila);
+    }
+
     public void limpiarTabla() {
         DefaultTableModel modelo = (DefaultTableModel) getModel();
         modelo.setRowCount(0);
-    }
-
-    public void agregarFila(Object[] datos) {
-        DefaultTableModel modelo = (DefaultTableModel) getModel();
-        modelo.addRow(datos);
     }
 }
