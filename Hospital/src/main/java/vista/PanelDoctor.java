@@ -1,76 +1,61 @@
+package vista;
+
 import componentes.TablaHospital;
 import controlador.DoctorControl;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import modelo.Doctor;
 
 public class PanelDoctor extends javax.swing.JPanel {
- private DoctorControl doctorControl;
+
+    private DoctorControl doctorControl;
     private TablaHospital tablaDoctores;
+    private JPanel panelTabla;
 
-    
     public PanelDoctor(DoctorControl doctorControl) {
-        initComponents();
-this.doctorControl = doctorControl;
-
+        this.doctorControl = doctorControl;
+        txtIdCedula.setEditable(false);
         configurarTabla();
         conectarEventos();
         actualizarTabla();
     }
 
     private void configurarTabla() {
-
         tablaDoctores = new TablaHospital();
-
         tablaDoctores.establecerColumnas(new String[]{
-            "Cédula",
-            "Nombre",
-            "Apellido paterno",
-            "Apellido materno",
-            "Turno",
-            "Especialidad"
+            "Cédula", "Nombre", "Apellido paterno",
+            "Apellido materno", "Turno", "Especialidad"
         });
-        
-        panelTabla.setLayout(new BorderLayout());
 
-        panelTabla.add(
-                new javax.swing.JScrollPane(tablaDoctores),
-                BorderLayout.CENTER
-        );
-
-        panelTabla.revalidate();
-        panelTabla.repaint();
+        panelTabla = new JPanel(new BorderLayout());
+        panelTabla.setPreferredSize(new Dimension(0, 220));
+        panelTabla.add(new JScrollPane(tablaDoctores), BorderLayout.CENTER);
+        add(panelTabla, BorderLayout.SOUTH);
+        revalidate();
+        repaint();
     }
 
     private void conectarEventos() {
-
         btnGuardar.addActionListener(e -> guardarDoctor());
-
         btnModificar.addActionListener(e -> modificarDoctor());
-
         btnEliminar.addActionListener(e -> eliminarDoctor());
-
         btnLimpiar.addActionListener(e -> limpiarCampos());
 
-        tablaDoctores.getSelectionModel()
-                .addListSelectionListener(e -> {
-
-                    if (!e.getValueIsAdjusting()) {
-                        cargarDoctorSeleccionado();
-                    }
-                });
+        tablaDoctores.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                cargarDoctorSeleccionado();
+            }
+        });
     }
-    private void guardarDoctor() {
 
+    private void guardarDoctor() {
         String turno = cmbTurno.getSelectedItem().toString();
 
-        if (turno.equals("Seleccione")) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Seleccione el turno del doctor"
-            );
-
+        if (turno.equals("Selecciona")) {
+            JOptionPane.showMessageDialog(this, "Seleccione el turno del doctor");
             return;
         }
 
@@ -83,105 +68,31 @@ this.doctorControl = doctorControl;
         );
 
         if (guardado) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Doctor registrado correctamente"
-            );
-
+            JOptionPane.showMessageDialog(this, "Doctor registrado correctamente");
             actualizarTabla();
             limpiarCampos();
         }
     }
 
-    public void actualizarTabla() {
-
-        tablaDoctores.limpiarTabla();
-
-        for (Doctor doctor : doctorControl.verDoctores()) {
-
-            tablaDoctores.agregarFila(new Object[]{
-                doctor.getIdCedula(),
-                doctor.getNombre(),
-                doctor.getApellidoP(),
-                doctor.getApellidoM(),
-                doctor.getTurno(),
-                doctor.getEspecialidad()
-            });
-        }
-    }
-
-    private void cargarDoctorSeleccionado() {
-
-        int fila = tablaDoctores.getSelectedRow();
-
-        if (fila == -1) {
-            return;
-        }
-
-        txtIdCedula.setText(
-                tablaDoctores.getValueAt(fila, 0).toString()
-        );
-
-        txtNombre.setText(
-                tablaDoctores.getValueAt(fila, 1).toString()
-        );
-
-        txtApellidoP.setText(
-                tablaDoctores.getValueAt(fila, 2).toString()
-        );
-
-        txtApellidoM.setText(
-                tablaDoctores.getValueAt(fila, 3).toString()
-        );
-
-        cmbTurno.setSelectedItem(
-                tablaDoctores.getValueAt(fila, 4).toString()
-        );
-
-        txtEspecialidad.setText(
-                tablaDoctores.getValueAt(fila, 5).toString()
-        );
-    }
-
     private void modificarDoctor() {
-
         if (txtIdCedula.getText().isEmpty()) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Seleccione un doctor de la tabla"
-            );
-
+            JOptionPane.showMessageDialog(this, "Seleccione un doctor de la tabla");
             return;
         }
 
         String turno = cmbTurno.getSelectedItem().toString();
 
-        if (turno.equals("Seleccione")) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Seleccione el turno del doctor"
-            );
-
+        if (turno.equals("Selecciona")) {
+            JOptionPane.showMessageDialog(this, "Seleccione el turno del doctor");
             return;
         }
 
         int idCedula;
 
         try {
-            idCedula = Integer.parseInt(
-                    txtIdCedula.getText()
-            );
-
+            idCedula = Integer.parseInt(txtIdCedula.getText());
         } catch (NumberFormatException e) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "La cédula no es válida"
-            );
-
+            JOptionPane.showMessageDialog(this, "La cédula no es válida");
             return;
         }
 
@@ -195,26 +106,15 @@ this.doctorControl = doctorControl;
         );
 
         if (modificado) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Doctor modificado correctamente"
-            );
-
+            JOptionPane.showMessageDialog(this, "Doctor modificado correctamente");
             actualizarTabla();
             limpiarCampos();
         }
     }
 
     private void eliminarDoctor() {
-
         if (txtIdCedula.getText().isEmpty()) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Seleccione un doctor de la tabla"
-            );
-
+            JOptionPane.showMessageDialog(this, "Seleccione un doctor de la tabla");
             return;
         }
 
@@ -232,58 +132,60 @@ this.doctorControl = doctorControl;
         int idCedula;
 
         try {
-            idCedula = Integer.parseInt(
-                    txtIdCedula.getText()
-            );
-
+            idCedula = Integer.parseInt(txtIdCedula.getText());
         } catch (NumberFormatException e) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "La cédula no es válida"
-            );
-
+            JOptionPane.showMessageDialog(this, "La cédula no es válida");
             return;
         }
 
-        boolean eliminado =
-                doctorControl.eliminarDoctor(idCedula);
-
-        if (eliminado) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Doctor eliminado correctamente"
-            );
-
+        if (doctorControl.eliminarDoctor(idCedula)) {
+            JOptionPane.showMessageDialog(this, "Doctor eliminado correctamente");
             actualizarTabla();
             limpiarCampos();
         }
     }
 
-    private void limpiarCampos() {
+    private void cargarDoctorSeleccionado() {
+        int fila = tablaDoctores.getSelectedRow();
 
+        if (fila == -1) {
+            return;
+        }
+
+        txtIdCedula.setText(tablaDoctores.getValueAt(fila, 0).toString());
+        txtNombre.setText(tablaDoctores.getValueAt(fila, 1).toString());
+        txtApellidoP.setText(tablaDoctores.getValueAt(fila, 2).toString());
+        txtApellidoM.setText(tablaDoctores.getValueAt(fila, 3).toString());
+        cmbTurno.setSelectedItem(tablaDoctores.getValueAt(fila, 4).toString());
+        txtEspecialidad.setText(tablaDoctores.getValueAt(fila, 5).toString());
+    }
+
+    public void actualizarTabla() {
+        tablaDoctores.limpiarTabla();
+
+        for (Doctor doctor : doctorControl.verDoctores()) {
+            tablaDoctores.agregarFila(new Object[]{
+                doctor.getIdCedula(),
+                doctor.getNombre(),
+                doctor.getApellidoP(),
+                doctor.getApellidoM(),
+                doctor.getTurno(),
+                doctor.getEspecialidad()
+            });
+        }
+    }
+
+    private void limpiarCampos() {
         txtIdCedula.setText("");
         txtNombre.setText("");
         txtApellidoP.setText("");
         txtApellidoM.setText("");
         cmbTurno.setSelectedIndex(0);
         txtEspecialidad.setText("");
-
         tablaDoctores.clearSelection();
-
         txtNombre.requestFocus();
     }
-
-    @SuppressWarnings("unchecked")
-    private void initComponents() {
-
-        /*
-        Aquí permanece el código generado automáticamente
-        por NetBeans en la pestaña Design.
-        */}
-}
-    @SuppressWarnings("unchecked")
+   /*@SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -432,7 +334,7 @@ this.doctorControl = doctorControl;
 
         add(jPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
-
+*/
     private void txtIdCedulaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdCedulaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtIdCedulaActionPerformed
