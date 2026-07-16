@@ -4,6 +4,9 @@
  */
 package vista;
 
+import javax.swing.table.DefaultTableModel;
+import modelo.Medicamento;
+
 /**
  *
  * @author KENNEDY
@@ -27,28 +30,81 @@ public class PanelMedicamento extends javax.swing.JPanel {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        BuscarM = new javax.swing.JTextPane();
+        jButton1 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        Tabla = new javax.swing.JTable();
+        todos = new javax.swing.JButton();
 
         jPanel1.setPreferredSize(new java.awt.Dimension(500, 550));
 
-        jTextField1.setText("jTextField1");
-        jTextField1.addActionListener(this::jTextField1ActionPerformed);
+        jLabel1.setText("Buscar Medicamento");
+
+        jLabel2.setText("Ingrese ID de medicamento:");
+
+        jScrollPane1.setViewportView(BuscarM);
+
+        jButton1.setText("Buscar");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
+
+        Tabla.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(Tabla);
+
+        todos.setText("Mostrar todos");
+        todos.addActionListener(this::todosActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(63, 63, 63)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(364, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(165, 165, 165)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton1)
+                        .addGap(18, 18, 18)
+                        .addComponent(todos)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(142, 142, 142)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(386, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton1)
+                        .addComponent(todos)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -67,13 +123,76 @@ public class PanelMedicamento extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+       String buscarMedicamentoStr = BuscarM.getText().trim();
+
+if (!buscarMedicamentoStr.isEmpty()) {
+    DefaultTableModel modeloTabla = (DefaultTableModel) Tabla.getModel();
+    
+    // Limpiamos la tabla antes de realizar cualquier acción
+    modeloTabla.setRowCount(0); 
+    
+    try {
+        // Intentamos parsear el ID recibido del campo de texto
+        int idBuscado = Integer.parseInt(buscarMedicamentoStr);
+        
+        // Ejecutamos la búsqueda usando el método correspondiente
+        Medicamento medEncontrado = buscarMedicamento(idBuscado);
+        
+        if (medEncontrado != null) {
+            // Si el medicamento existe, lo agregamos a la tabla usando sus getters
+            Object[] fila = {
+                medEncontrado.getIdMedicamento(),
+                medEncontrado.getNombreMedicamento(),
+                medEncontrado.getDosis(),
+                medEncontrado.getDescripcion()
+            };
+            modeloTabla.addRow(fila);
+        } else {
+            // Si no se encuentra el medicamento en la base de datos
+            Object[] filaError = {"No encontrado", "No existe medicamento con ID: " + idBuscado, "", ""};
+            modeloTabla.addRow(filaError);
+        }
+        
+    } catch (NumberFormatException e) {
+        // Captura el error si el usuario ingresa letras o símbolos en lugar de números
+        Object[] filaError = {"ERROR", "Por favor, ingrese un ID numérico válido", "", ""};
+        modeloTabla.addRow(filaError);
+    }
+}
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void todosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_todosActionPerformed
+        // TODO add your handling code here:
+        javax.swing.table.DefaultTableModel modeloTabla = (javax.swing.table.DefaultTableModel) tabla.getModel();
+    
+    // 2. Limpiamos la tabla para no duplicar filas si se presiona varias veces
+    modeloTabla.setRowCount(0); 
+    
+    // 3. Recorremos la lista en memoria y extraemos los datos con los getters
+    for (modelo.Medicamento med : listaMedicamentosFicticia) {
+        Object[] fila = {
+            med.getIdMedicamento(),
+            med.getNombreMedicamento(),
+            med.getDosis(),
+            med.getDescripcion()
+        };
+        // 4. Agregamos la fila a la tabla
+        modeloTabla.addRow(fila);
+    }
+    }//GEN-LAST:event_todosActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextPane BuscarM;
+    private javax.swing.JTable Tabla;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JButton todos;
     // End of variables declaration//GEN-END:variables
 }
