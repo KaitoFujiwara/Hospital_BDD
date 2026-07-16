@@ -58,9 +58,7 @@ String genero = cmbGenero.getSelectedItem().toString();
 }
     
     public void actualizarTabla() {
-
     tablaPacientes.limpiarTabla();
-
     for (Paciente paciente : pacienteControl.verPacientes()) {
 
         tablaPacientes.agregarFila(new Object[]{
@@ -95,9 +93,7 @@ String genero = cmbGenero.getSelectedItem().toString();
         JOptionPane.showMessageDialog(this,"Seleccione un paciente de la tabla");
         return;
     }
-
     int idPaciente =Integer.parseInt(txtIdPaciente.getText());
-
     boolean modificado = pacienteControl.modificarPaciente(
                     idPaciente,
                     txtNombre.getText(),
@@ -107,9 +103,7 @@ String genero = cmbGenero.getSelectedItem().toString();
                     cmbGenero.getSelectedItem().toString(),
                     txtPeso.getText()
             );
-
     if (modificado) {
-
         JOptionPane.showMessageDialog(this,"Paciente modificado correctamente");
         actualizarTabla();
         limpiarCampos();
@@ -247,10 +241,6 @@ String genero = cmbGenero.getSelectedItem().toString();
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(200, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(131, 131, 131))
-            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
@@ -268,32 +258,34 @@ String genero = cmbGenero.getSelectedItem().toString();
                                 .addComponent(jLabel5)))
                         .addGap(16, 16, 16)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(txtIdPaciente)
-                                .addComponent(txtNombre)
-                                .addComponent(txtApellidoP)
-                                .addComponent(txtApellidoM)
-                                .addComponent(cmbGenero, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(txtEdad, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(27, 27, 27)
-                                    .addComponent(jLabel8)
-                                    .addGap(18, 18, Short.MAX_VALUE)
-                                    .addComponent(txtPeso, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(btnModificar)
                                 .addGap(48, 48, 48)
                                 .addComponent(btnEliminar)
                                 .addGap(46, 46, 46)
-                                .addComponent(btnLimpiar)))))
-                .addGap(0, 0, Short.MAX_VALUE))
+                                .addComponent(btnLimpiar))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel1)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtIdPaciente)
+                                    .addComponent(txtNombre)
+                                    .addComponent(txtApellidoP)
+                                    .addComponent(txtApellidoM)
+                                    .addComponent(cmbGenero, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(txtEdad, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(27, 27, 27)
+                                        .addComponent(jLabel8)
+                                        .addGap(18, 18, Short.MAX_VALUE)
+                                        .addComponent(txtPeso, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                .addGap(0, 80, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(34, 34, 34)
+                .addGap(35, 35, 35)
                 .addComponent(jLabel1)
-                .addGap(28, 28, 28)
+                .addGap(27, 27, 27)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtIdPaciente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
