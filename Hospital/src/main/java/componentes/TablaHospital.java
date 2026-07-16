@@ -1,13 +1,30 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package componentes;
 
-/**
- *
- * @author KENNEDY
- */
-public class TablaHospital {
-    
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+public class TablaHospital extends JTable {
+
+    public TablaHospital() {
+        setRowHeight(25);
+    }
+
+    public void establecerColumnas(String[] columnas) {
+        setModel(new DefaultTableModel(null, columnas) {
+            @Override
+            public boolean isCellEditable(int fila, int columna) {
+                return false;
+            }
+        });
+    }
+
+    public void limpiarTabla() {
+        DefaultTableModel modelo = (DefaultTableModel) getModel();
+        modelo.setRowCount(0);
+    }
+
+    public void agregarFila(Object[] datos) {
+        DefaultTableModel modelo = (DefaultTableModel) getModel();
+        modelo.addRow(datos);
+    }
 }
