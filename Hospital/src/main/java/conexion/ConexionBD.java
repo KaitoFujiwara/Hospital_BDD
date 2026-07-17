@@ -8,7 +8,7 @@ public class ConexionBD {
 
     String url = "jdbc:postgresql://localhost:5432/Hospital?currentSchema=Proyecto";
     String usuario = "postgres";
-    String contrasena = "Segamonika1!";
+    String contrasena = "24160536!";
 
     public Connection conectar() {
 

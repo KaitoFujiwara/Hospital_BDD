@@ -18,20 +18,20 @@ public class ConsultaControl {
     private DoctorControl doctorControl;
     private ConexionBD conexionBD;
 
-    public ConsultaControl(PacienteControl pacienteControl,DoctorControl doctorControl) {
+    public ConsultaControl(PacienteControl pacienteControl, DoctorControl doctorControl) {
         this.pacienteControl = pacienteControl;
         this.doctorControl = doctorControl;
         conexionBD = new ConexionBD();
     }
 
-    public boolean crearConsulta(int idPaciente,int idCedula,String observaciones,String diagnostico,String alergias,String sintomas,String tipoSangre) {
+    public boolean crearConsulta(int idPaciente, int idCedula, String observaciones, String diagnostico, String alergias, String sintomas, String tipoSangre) {
         if (pacienteControl.buscarPaciente(idPaciente) == null) {
-            JOptionPane.showMessageDialog(null,"El paciente seleccionado no existe");
+            JOptionPane.showMessageDialog(null, "El paciente seleccionado no existe");
             return false;
         }
 
         if (doctorControl.buscarDoctor(idCedula) == null) {
-            JOptionPane.showMessageDialog(null,"El doctor seleccionado no existe");
+            JOptionPane.showMessageDialog(null, "El doctor seleccionado no existe");
             return false;
         }
 
@@ -41,13 +41,29 @@ public class ConsultaControl {
         sintomas = sintomas.trim();
         tipoSangre = tipoSangre.trim();
 
+        // --- VALIDACIONES DE CAMPOS VACÍOS ---
         if (sintomas.isEmpty()) {
-            JOptionPane.showMessageDialog(null,"Debe ingresar los síntomas");
+            JOptionPane.showMessageDialog(null, "Debe ingresar los síntomas");
+            return false;
+        }
+
+        if (diagnostico.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Debe ingresar el diagnóstico médico");
+            return false;
+        }
+
+        if (alergias.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Debe ingresar las alergias (o escribir 'Ninguna')");
+            return false;
+        }
+
+        if (observaciones.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Debe ingresar las observaciones de la consulta");
             return false;
         }
 
         if (tipoSangre.isEmpty() || tipoSangre.equals("Seleccione")) {
-            JOptionPane.showMessageDialog(null,"Debe seleccionar el tipo de sangre");
+            JOptionPane.showMessageDialog(null, "Debe seleccionar el tipo de sangre");
             return false;
         }
 
@@ -65,29 +81,29 @@ public class ConsultaControl {
 
         try (Connection conexion = conexionBD.conectar()) {
             if (conexion == null) {
-                JOptionPane.showMessageDialog(null,"No fue posible conectar con la base de datos");
+                JOptionPane.showMessageDialog(null, "No fue posible conectar con la base de datos");
                 return false;
             }
 
             try (PreparedStatement sentencia = conexion.prepareStatement(sql)) {
-                sentencia.setInt(1,idConsulta);
-                sentencia.setInt(2,idPaciente);
-                sentencia.setInt(3,idCedula);
-                sentencia.setDate(4,java.sql.Date.valueOf(LocalDate.now()));
-                sentencia.setNull(5,Types.DATE);
-                sentencia.setTime(6,java.sql.Time.valueOf(LocalTime.now()));
-                sentencia.setNull(7,Types.TIME);
-                sentencia.setString(8,observaciones);
-                sentencia.setString(9,diagnostico);
-                sentencia.setString(10,alergias);
-                sentencia.setString(11,sintomas);
-                sentencia.setString(12,tipoSangre);
+                sentencia.setInt(1, idConsulta);
+                sentencia.setInt(2, idPaciente);
+                sentencia.setInt(3, idCedula);
+                sentencia.setDate(4, java.sql.Date.valueOf(LocalDate.now()));
+                sentencia.setNull(5, Types.DATE);
+                sentencia.setTime(6, java.sql.Time.valueOf(LocalTime.now()));
+                sentencia.setNull(7, Types.TIME);
+                sentencia.setString(8, observaciones);
+                sentencia.setString(9, diagnostico);
+                sentencia.setString(10, alergias);
+                sentencia.setString(11, sintomas);
+                sentencia.setString(12, tipoSangre);
 
                 return sentencia.executeUpdate() > 0;
             }
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null,"Error al registrar consulta:\n" + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al registrar consulta:\n" + e.getMessage());
             return false;
         }
     }
@@ -110,7 +126,7 @@ public class ConsultaControl {
             }
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null,"Error al generar el ID de consulta:\n" + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al generar el ID de consulta:\n" + e.getMessage());
         }
 
         return -1;
@@ -126,7 +142,7 @@ public class ConsultaControl {
             }
 
             try (PreparedStatement sentencia = conexion.prepareStatement(sql)) {
-                sentencia.setInt(1,idConsulta);
+                sentencia.setInt(1, idConsulta);
 
                 try (ResultSet resultado = sentencia.executeQuery()) {
                     if (resultado.next()) {
@@ -136,26 +152,42 @@ public class ConsultaControl {
             }
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null,"Error al buscar consulta:\n" + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al buscar consulta:\n" + e.getMessage());
         }
 
         return null;
     }
 
-    public boolean modificarConsulta(int idConsulta,String observaciones,String diagnostico,String alergias,String sintomas,String tipoSangre) {
+    public boolean modificarConsulta(int idConsulta, String observaciones, String diagnostico, String alergias, String sintomas, String tipoSangre) {
         observaciones = observaciones.trim();
         diagnostico = diagnostico.trim();
         alergias = alergias.trim();
         sintomas = sintomas.trim();
         tipoSangre = tipoSangre.trim();
 
+        // --- VALIDACIONES DE CAMPOS VACÍOS ---
         if (sintomas.isEmpty()) {
-            JOptionPane.showMessageDialog(null,"Los síntomas son obligatorios");
+            JOptionPane.showMessageDialog(null, "Los síntomas son obligatorios");
+            return false;
+        }
+
+        if (diagnostico.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "El diagnóstico es obligatorio");
+            return false;
+        }
+
+        if (alergias.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Debe especificar las alergias (o 'Ninguna')");
+            return false;
+        }
+
+        if (observaciones.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Las observaciones son obligatorias");
             return false;
         }
 
         if (tipoSangre.isEmpty() || tipoSangre.equals("Seleccione")) {
-            JOptionPane.showMessageDialog(null,"El tipo de sangre es obligatorio");
+            JOptionPane.showMessageDialog(null, "El tipo de sangre es obligatorio");
             return false;
         }
 
@@ -169,17 +201,17 @@ public class ConsultaControl {
             }
 
             try (PreparedStatement sentencia = conexion.prepareStatement(sql)) {
-                sentencia.setString(1,observaciones);
-                sentencia.setString(2,diagnostico);
-                sentencia.setString(3,alergias);
-                sentencia.setString(4,sintomas);
-                sentencia.setString(5,tipoSangre);
-                sentencia.setInt(6,idConsulta);
+                sentencia.setString(1, observaciones);
+                sentencia.setString(2, diagnostico);
+                sentencia.setString(3, alergias);
+                sentencia.setString(4, sintomas);
+                sentencia.setString(5, tipoSangre);
+                sentencia.setInt(6, idConsulta);
 
                 int filas = sentencia.executeUpdate();
 
                 if (filas == 0) {
-                    JOptionPane.showMessageDialog(null,"No se encontró la consulta");
+                    JOptionPane.showMessageDialog(null, "No se encontró la consulta");
                     return false;
                 }
 
@@ -187,7 +219,7 @@ public class ConsultaControl {
             }
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null,"Error al modificar consulta:\n" + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al modificar consulta:\n" + e.getMessage());
             return false;
         }
     }
@@ -196,12 +228,12 @@ public class ConsultaControl {
         Consulta consulta = buscarConsulta(idConsulta);
 
         if (consulta == null) {
-            JOptionPane.showMessageDialog(null,"No se encontró la consulta");
+            JOptionPane.showMessageDialog(null, "No se encontró la consulta");
             return false;
         }
 
         if (consulta.getFechaSalida() != null) {
-            JOptionPane.showMessageDialog(null,"La salida ya fue registrada");
+            JOptionPane.showMessageDialog(null, "La salida ya fue registrada");
             return false;
         }
 
@@ -215,15 +247,15 @@ public class ConsultaControl {
             }
 
             try (PreparedStatement sentencia = conexion.prepareStatement(sql)) {
-                sentencia.setDate(1,java.sql.Date.valueOf(LocalDate.now()));
-                sentencia.setTime(2,java.sql.Time.valueOf(LocalTime.now()));
-                sentencia.setInt(3,idConsulta);
+                sentencia.setDate(1, java.sql.Date.valueOf(LocalDate.now()));
+                sentencia.setTime(2, java.sql.Time.valueOf(LocalTime.now()));
+                sentencia.setInt(3, idConsulta);
 
                 return sentencia.executeUpdate() > 0;
             }
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null,"Error al registrar salida:\n" + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al registrar salida:\n" + e.getMessage());
             return false;
         }
     }
@@ -238,12 +270,12 @@ public class ConsultaControl {
             }
 
             try (PreparedStatement sentencia = conexion.prepareStatement(sql)) {
-                sentencia.setInt(1,idConsulta);
+                sentencia.setInt(1, idConsulta);
 
                 int filas = sentencia.executeUpdate();
 
                 if (filas == 0) {
-                    JOptionPane.showMessageDialog(null,"No se encontró la consulta");
+                    JOptionPane.showMessageDialog(null, "No se encontró la consulta");
                     return false;
                 }
 
@@ -279,7 +311,7 @@ public class ConsultaControl {
             }
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null,"Error al consultar consultas:\n" + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al consultar consultas:\n" + e.getMessage());
         }
 
         return listaConsultas;
@@ -298,7 +330,7 @@ public class ConsultaControl {
             }
 
             try (PreparedStatement sentencia = conexion.prepareStatement(sql)) {
-                sentencia.setInt(1,idPaciente);
+                sentencia.setInt(1, idPaciente);
 
                 try (ResultSet resultado = sentencia.executeQuery()) {
                     while (resultado.next()) {
@@ -308,7 +340,7 @@ public class ConsultaControl {
             }
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null,"Error al consultar datos del paciente:\n" + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al consultar datos del paciente:\n" + e.getMessage());
         }
 
         return consultasPaciente;
@@ -327,7 +359,7 @@ public class ConsultaControl {
             }
 
             try (PreparedStatement sentencia = conexion.prepareStatement(sql)) {
-                sentencia.setInt(1,idCedula);
+                sentencia.setInt(1, idCedula);
 
                 try (ResultSet resultado = sentencia.executeQuery()) {
                     while (resultado.next()) {
@@ -337,7 +369,7 @@ public class ConsultaControl {
             }
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null,"Error al consultar datos del doctor:\n" + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al consultar datos del doctor:\n" + e.getMessage());
         }
 
         return consultasDoctor;
@@ -360,7 +392,7 @@ public class ConsultaControl {
             }
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null,"Error al contar consultas:\n" + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al contar consultas:\n" + e.getMessage());
         }
 
         return 0;

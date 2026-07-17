@@ -55,7 +55,7 @@ public class PacienteControl {
         }
 
         String sql="INSERT INTO \"Proyecto\".\"Paciente\" "
-                +"(\"nombre(s)\",\"apellidoP\",\"apellidoM\",\"edad\",\"peso\",\"genero\") "
+                +"(\"nombre\",\"apellido_paterno\",\"apellido_materno\",\"edad\",\"peso\",\"genero\") "
                 +"VALUES(?,?,?,?,?,?)";
 
         Connection conexion=conexionBD.conectar();
@@ -82,10 +82,10 @@ public class PacienteControl {
     }
 
     public Paciente buscarPaciente(int idPaciente) {
-        String sql="SELECT \"id_Paciente\",\"nombre(s)\",\"apellidoP\",\"apellidoM\","
+        String sql="SELECT \"id_paciente\",\"nombre\",\"apellido_paterno\",\"apellido_materno\","
                 +"\"edad\",\"peso\",\"genero\" "
                 +"FROM \"Proyecto\".\"Paciente\" "
-                +"WHERE \"id_Paciente\"=?";
+                +"WHERE \"id_paciente\"=?";
 
         Connection conexion=conexionBD.conectar();
 
@@ -169,13 +169,13 @@ public class PacienteControl {
         }
 
         String sql="UPDATE \"Proyecto\".\"Paciente\" SET "
-                +"\"nombre(s)\"=?,"
-                +"\"apellidoP\"=?,"
-                +"\"apellidoM\"=?,"
+                +"\"nombre\"=?,"
+                +"\"apellido_paterno\"=?,"
+                +"\"apellido_materno\"=?,"
                 +"\"edad\"=?,"
                 +"\"genero\"=?,"
                 +"\"peso\"=? "
-                +"WHERE \"id_Paciente\"=?";
+                +"WHERE \"id_paciente\"=?";
 
         Connection conexion=conexionBD.conectar();
 
@@ -210,7 +210,7 @@ public class PacienteControl {
 
     public boolean eliminarPaciente(int idPaciente) {
         String sql="DELETE FROM \"Proyecto\".\"Paciente\" "
-                +"WHERE \"id_Paciente\"=?";
+                +"WHERE \"id_paciente\"=?";
 
         Connection conexion=conexionBD.conectar();
 
@@ -243,10 +243,10 @@ public class PacienteControl {
     public ArrayList<Paciente> verPacientes() {
         ArrayList<Paciente> listaPacientes=new ArrayList<>();
 
-        String sql="SELECT \"id_Paciente\",\"nombre(s)\",\"apellidoP\",\"apellidoM\","
+        String sql="SELECT \"id_paciente\",\"nombre\",\"apellido_paterno\",\"apellido_materno\","
                 +"\"edad\",\"peso\",\"genero\" "
                 +"FROM \"Proyecto\".\"Paciente\" "
-                +"ORDER BY \"id_Paciente\"";
+                +"ORDER BY \"id_paciente\"";
 
         Connection conexion=conexionBD.conectar();
 
@@ -304,10 +304,10 @@ public class PacienteControl {
 
     private Paciente convertirPaciente(ResultSet resultado)throws SQLException {
         return new Paciente(
-                resultado.getInt("id_Paciente"),
-                resultado.getString("nombre(s)"),
-                resultado.getString("apellidoP"),
-                resultado.getString("apellidoM"),
+                resultado.getInt("id_paciente"),
+                resultado.getString("nombre"),
+                resultado.getString("apellido_paterno"),
+                resultado.getString("apellido_materno"),
                 resultado.getInt("edad"),
                 resultado.getString("genero"),
                 resultado.getInt("peso")

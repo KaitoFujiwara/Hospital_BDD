@@ -77,8 +77,6 @@ public class PanelPaciente extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Paciente registrado correctamente");
             actualizarTabla();
             limpiarCampos();
-        } else {
-            JOptionPane.showMessageDialog(this, "No se pudo registrar. Verifique que la edad (1-120) y peso (1-500) sean lógicos.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     

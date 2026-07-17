@@ -33,6 +33,11 @@ public class DoctorControl {
             JOptionPane.showMessageDialog(null,"El apellido paterno solo puede contener letras");
             return false;
         }
+        
+        if(!nombreValido(especialidad)) {
+            JOptionPane.showMessageDialog(null,"La especialidad solo puede contener letras y espacios");
+            return false;
+        }
 
         if(!nombreValido(apellidoM)) {
             JOptionPane.showMessageDialog(null,"El apellido materno solo puede contener letras");
@@ -171,7 +176,12 @@ public class DoctorControl {
             JOptionPane.showMessageDialog(null,"El apellido paterno solo puede contener letras");
             return false;
         }
-
+        
+        if(!nombreValido(especialidad)) {
+            JOptionPane.showMessageDialog(null,"La especialidad solo puede contener letras y espacios");
+            return false;
+        }
+        
         if(!nombreValido(apellidoM)) {
             JOptionPane.showMessageDialog(null,"El apellido materno solo puede contener letras");
             return false;
