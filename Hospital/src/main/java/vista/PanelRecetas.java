@@ -382,164 +382,115 @@ import util.generadorRecetasPDF;
         btnLimpiar = new javax.swing.JButton();
         btnPDF = new javax.swing.JButton();
 
-        setPreferredSize(new java.awt.Dimension(500, 550));
+        // Panel Principal con estructura limpia (BorderLayout)
+        this.setLayout(new java.awt.BorderLayout(15, 15));
+        this.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
+        // --- TÍTULO SUPERIOR ---
+        lblTitulo.setFont(new java.awt.Font("Segoe UI", 1, 18));
+        lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTitulo.setText("REGISTRO DE RECETAS");
+        lblTitulo.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        this.add(lblTitulo, java.awt.BorderLayout.NORTH);
+
+        // --- ÁREA CENTRAL: Formulario (Izquierda) + Tabla (Derecha) ---
+        javax.swing.JPanel panelContenedorCentral = new javax.swing.JPanel(new java.awt.BorderLayout(15, 15));
+
+        // 1. Panel de Formulario (jPanel1)
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos de la receta"));
-        jPanel1.setFocusable(false);
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+        
+        java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.insets = new java.awt.Insets(8, 8, 8, 8);
+        gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
 
+        // Fila 0: ID Receta
+        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.0;
         lblIDreceta.setText("ID receta:");
+        jPanel1.add(lblIDreceta, gbc);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        txtIDReceta.setPreferredSize(new java.awt.Dimension(220, 26));
+        jPanel1.add(txtIDReceta, gbc);
 
+        // Fila 1: Consulta
+        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.0;
         lblConsulta.setText("Consulta:");
-
-        lbl_medicamento.setText("Medicamento:");
-
-        lblIndicaciones.setText("Indicaciones:");
-
-        lblHora.setText("Hora HH:mm:");
-
-        txtHora.addActionListener(evt -> txtHoraActionPerformed(evt));
-
-        comboMedicamentos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
+        jPanel1.add(lblConsulta, gbc);
+        gbc.gridx = 1; gbc.weightx = 1.0;
         comboConsulta.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        comboConsulta.setPreferredSize(new java.awt.Dimension(220, 26));
+        jPanel1.add(comboConsulta, gbc);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblHora)
-                    .addComponent(lblIDreceta)
-                    .addComponent(lblConsulta)
-                    .addComponent(lbl_medicamento)
-                    .addComponent(lblIndicaciones))
-                .addGap(26, 26, 26)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtHora)
-                    .addComponent(comboMedicamentos, 0, 87, Short.MAX_VALUE)
-                    .addComponent(txtIndicaciones)
-                    .addComponent(txtIDReceta)
-                    .addComponent(comboConsulta, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblIDreceta)
-                    .addComponent(txtIDReceta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblConsulta)
-                    .addComponent(comboConsulta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbl_medicamento)
-                    .addComponent(comboMedicamentos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblIndicaciones)
-                    .addComponent(txtIndicaciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblHora)
-                    .addComponent(txtHora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(143, 143, 143))
-        );
+        // Fila 2: Medicamento
+        gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0.0;
+        lbl_medicamento.setText("Medicamento:");
+        jPanel1.add(lbl_medicamento, gbc);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        comboMedicamentos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        comboMedicamentos.setPreferredSize(new java.awt.Dimension(220, 26));
+        jPanel1.add(comboMedicamentos, gbc);
 
+        // Fila 3: Indicaciones
+        gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0.0;
+        lblIndicaciones.setText("Indicaciones:");
+        jPanel1.add(lblIndicaciones, gbc);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        txtIndicaciones.setPreferredSize(new java.awt.Dimension(220, 26));
+        jPanel1.add(txtIndicaciones, gbc);
+
+        // Fila 4: Hora
+        gbc.gridx = 0; gbc.gridy = 4; gbc.weightx = 0.0;
+        lblHora.setText("Hora HH:mm:");
+        jPanel1.add(lblHora, gbc);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        txtHora.setPreferredSize(new java.awt.Dimension(220, 26));
+        txtHora.addActionListener(evt -> txtHoraActionPerformed(evt));
+        jPanel1.add(txtHora, gbc);
+
+        // Añadir el formulario al contenedor en la zona OESTE (Izquierda)
+        panelContenedorCentral.add(jPanel1, java.awt.BorderLayout.WEST);
+
+        // 2. Panel de la Tabla (jPanel2)
+        jPanel2.setLayout(new java.awt.BorderLayout());
         tablaHospital1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
-            },
+            new Object [][] {},
             new String [] {
                 "ID Receta", "ID Consulta", "ID Medicamento", "Indicaciones", "Hora"
             }
         ));
         tableInfoReceta.setViewportView(tablaHospital1);
+        jPanel2.add(tableInfoReceta, java.awt.BorderLayout.CENTER);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(tableInfoReceta, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(tableInfoReceta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(37, Short.MAX_VALUE))
-        );
+        // Añadir la tabla al contenedor en la zona CENTER (para que ocupe todo el espacio restante de la derecha)
+        panelContenedorCentral.add(jPanel2, java.awt.BorderLayout.CENTER);
 
-        lblTitulo.setText("REGISTRO DE RECETAS");
+        this.add(panelContenedorCentral, java.awt.BorderLayout.CENTER);
+
+        // --- PANEL INFERIOR: Botones de Acción ---
+        javax.swing.JPanel panelBotones = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 15, 10));
 
         btnGuardar.setText("Guardar");
+        btnGuardar.setPreferredSize(new java.awt.Dimension(110, 30));
+        panelBotones.add(btnGuardar);
 
         btnModificar.setText("Modificar");
+        btnModificar.setPreferredSize(new java.awt.Dimension(110, 30));
+        panelBotones.add(btnModificar);
 
         btnEliminar.setText("Eliminar");
+        btnEliminar.setPreferredSize(new java.awt.Dimension(110, 30));
+        panelBotones.add(btnEliminar);
 
         btnLimpiar.setText("Limpiar");
+        btnLimpiar.setPreferredSize(new java.awt.Dimension(110, 30));
+        panelBotones.add(btnLimpiar);
 
         btnPDF.setText("Generar PDF");
+        btnPDF.setPreferredSize(new java.awt.Dimension(120, 30));
+        panelBotones.add(btnPDF);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(137, 137, 137)
-                        .addComponent(lblTitulo)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(67, 67, 67)
-                .addComponent(btnGuardar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnModificar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnEliminar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnLimpiar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnPDF)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lblTitulo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnGuardar)
-                    .addComponent(btnModificar)
-                    .addComponent(btnEliminar)
-                    .addComponent(btnLimpiar)
-                    .addComponent(btnPDF))
-                .addGap(10, 10, 10))
-        );
-    }// </editor-fold>
+        this.add(panelBotones, java.awt.BorderLayout.SOUTH);
+    } // </editor-fold>
         
         
         
@@ -573,7 +524,6 @@ import util.generadorRecetasPDF;
         btnLimpiar = new javax.swing.JButton();
         btnPDF = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(500, 550));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos de la receta"));
@@ -595,6 +545,8 @@ import util.generadorRecetasPDF;
 
         comboConsulta.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        txtIDReceta.addActionListener(this::txtIDRecetaActionPerformed);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -610,7 +562,7 @@ import util.generadorRecetasPDF;
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtHora)
-                    .addComponent(comboMedicamentos, 0, 87, Short.MAX_VALUE)
+                    .addComponent(comboMedicamentos, 0, 170, Short.MAX_VALUE)
                     .addComponent(txtIndicaciones)
                     .addComponent(txtIDReceta)
                     .addComponent(comboConsulta, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -659,17 +611,13 @@ import util.generadorRecetasPDF;
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(tableInfoReceta, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(tableInfoReceta, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 262, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(tableInfoReceta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(37, Short.MAX_VALUE))
+            .addComponent(tableInfoReceta, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
         );
 
         lblTitulo.setText("REGISTRO DE RECETAS");
@@ -684,22 +632,14 @@ import util.generadorRecetasPDF;
 
         btnPDF.setText("Generar PDF");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(137, 137, 137)
-                        .addComponent(lblTitulo)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addGap(137, 137, 137)
+                .addComponent(lblTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(283, 283, 283))
             .addGroup(layout.createSequentialGroup()
                 .addGap(67, 67, 67)
                 .addComponent(btnGuardar)
@@ -712,14 +652,18 @@ import util.generadorRecetasPDF;
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnPDF)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addComponent(lblTitulo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -731,13 +675,15 @@ import util.generadorRecetasPDF;
                     .addComponent(btnPDF))
                 .addGap(10, 10, 10))
         );
-
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtHoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtHoraActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtHoraActionPerformed
+
+    private void txtIDRecetaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIDRecetaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIDRecetaActionPerformed
 */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
