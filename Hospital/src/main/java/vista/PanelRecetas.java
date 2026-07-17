@@ -192,8 +192,10 @@ public class PanelRecetas extends JPanel {
         }
 
         LocalTime horaSuministrar;
+        String horaSuministrarS;
         try {
             horaSuministrar = LocalTime.parse(txtHoraSuministrar.getText().trim());
+            horaSuministrarS = txtHoraSuministrar.toString();
         } catch (DateTimeParseException ex) {
             JOptionPane.showMessageDialog(this, "Formato de hora incorrecto. Use HH:mm (Ej: 14:30)", "Error de formato", JOptionPane.ERROR_MESSAGE);
             return;
@@ -246,8 +248,10 @@ public class PanelRecetas extends JPanel {
         }
 
         LocalTime horaSuministrar;
+        String horaSuministrarS;
         try {
             horaSuministrar = LocalTime.parse(txtHoraSuministrar.getText().trim());
+            horaSuministrarS = txtHoraSuministrar.toString();
         } catch (DateTimeParseException ex) {
             JOptionPane.showMessageDialog(this, "Formato de hora incorrecto. Use HH:mm.");
             return;
@@ -261,7 +265,7 @@ public class PanelRecetas extends JPanel {
                 medicamento.getIdMedicamento(),
                 consulta.getIdConsulta(),
                 indicaciones,
-                horaSuministrar // Cambia a 'horaSuministrar.toString()' si tu método en el controlador pide String
+                horaSuministrarS // Cambia a 'horaSuministrar.toString()' si tu método en el controlador pide String
         );
 
         if (modificado) {
