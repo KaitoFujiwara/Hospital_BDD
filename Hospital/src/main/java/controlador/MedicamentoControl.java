@@ -22,6 +22,16 @@ public class MedicamentoControl {
         dosis=dosis.trim();
         descripcion=descripcion.trim();
 
+        if(!medicamentoValido(nombreMedicamento)) {
+            JOptionPane.showMessageDialog(null,"El nombre del medicamento contiene caracteres no permitidos");
+            return false;
+        }    
+        
+        if(!dosisValida(dosis.toLowerCase())) {
+            JOptionPane.showMessageDialog(null,"Use una dosis como: 500 mg, 10 ml o 1 tableta");
+            return false;
+        }
+        
         if(nombreMedicamento.isEmpty()) {
             JOptionPane.showMessageDialog(null,"El nombre del medicamento es obligatorio");
             return false;
@@ -202,6 +212,14 @@ public class MedicamentoControl {
         }
 
         return listaMedicamentos;
+    }
+    
+    private boolean medicamentoValido(String texto) {
+        return texto.matches("^[\\p{L}0-9 .-]+$");
+    }
+    
+    private boolean dosisValida(String dosis) {
+        return dosis.matches("^\\d+(\\.\\d+)?\\s*(mg|g|ml|mcg|tableta|tabletas)$");
     }
 
     public int cantidadMedicamentos() {

@@ -121,6 +121,16 @@ public class PacienteControl {
             JOptionPane.showMessageDialog(null,"El nombre solo puede contener letras y espacios");
             return false;
         }
+        
+        if(nombre.length()<2) {
+            JOptionPane.showMessageDialog(null,"El nombre debe tener al menos 2 letras");
+            return false;
+        }
+
+        if(nombre.length()>50) {
+            JOptionPane.showMessageDialog(null,"El nombre es demasiado largo");
+            return false;
+        }
 
         if(!nombreValido(apellidoP)) {
             JOptionPane.showMessageDialog(null,"El apellido paterno solo puede contener letras");
@@ -285,6 +295,10 @@ public class PacienteControl {
     }
    
     private boolean nombreValido(String texto) {
+        return texto.matches("^[\\p{L} ]+$");
+    }
+    
+    private boolean textoValido(String texto) {
         return texto.matches("^[\\p{L} ]+$");
     }
 

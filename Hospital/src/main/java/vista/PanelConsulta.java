@@ -1,5 +1,10 @@
 package vista;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.JPanel;
 import componentes.TablaHospital;
 import controlador.ConsultaControl;
 import controlador.DoctorControl;
@@ -49,6 +54,13 @@ public class PanelConsulta extends javax.swing.JPanel {
             DoctorControl doctorControl) {
 
         initComponents();
+        acomodarLayout();
+        
+        
+    this.consultaControl=consultaControl;
+    this.pacienteControl=pacienteControl;
+    this.doctorControl=doctorControl;
+
 
         this.consultaControl = consultaControl;
         this.pacienteControl = pacienteControl;
@@ -76,6 +88,180 @@ public class PanelConsulta extends javax.swing.JPanel {
         actualizarTabla();
         mostrarFechaHoraActual();
     }
+    
+    private void acomodarLayout() {
+    jPanel1.removeAll();
+    jPanel1.setLayout(new BorderLayout(15,15));
+    jPanel1.setBorder(
+            javax.swing.BorderFactory.createEmptyBorder(
+                    15,15,15,15
+            )
+    );
+
+    JPanel panelFormulario=new JPanel(new GridBagLayout());
+    GridBagConstraints gbc=new GridBagConstraints();
+
+    gbc.insets=new Insets(5,5,5,5);
+    gbc.fill=GridBagConstraints.HORIZONTAL;
+    gbc.anchor=GridBagConstraints.WEST;
+
+    int fila=0;
+
+    gbc.gridx=0;
+    gbc.gridy=fila;
+    gbc.gridwidth=4;
+    panelFormulario.add(jLabel4,gbc);
+
+    fila++;
+
+    gbc.gridwidth=1;
+    gbc.gridx=0;
+    gbc.gridy=fila;
+    panelFormulario.add(jLabel5,gbc);
+
+    gbc.gridx=1;
+    gbc.weightx=1;
+    panelFormulario.add(txtIdConsulta,gbc);
+
+    gbc.gridx=2;
+    gbc.weightx=0;
+    panelFormulario.add(jLabel1,gbc);
+
+    gbc.gridx=3;
+    gbc.weightx=1;
+    panelFormulario.add(cmbTipoSangre,gbc);
+
+    fila++;
+
+    gbc.gridx=0;
+    gbc.gridy=fila;
+    gbc.weightx=0;
+    panelFormulario.add(jLabel3,gbc);
+
+    gbc.gridx=1;
+    gbc.weightx=1;
+    panelFormulario.add(cmbPaciente,gbc);
+
+    gbc.gridx=2;
+    gbc.weightx=0;
+    panelFormulario.add(jLabel2,gbc);
+
+    gbc.gridx=3;
+    gbc.weightx=1;
+    panelFormulario.add(cmbDoctor,gbc);
+
+    fila++;
+
+    gbc.gridx=0;
+    gbc.gridy=fila;
+    gbc.weightx=0;
+    panelFormulario.add(jLabel6,gbc);
+
+    gbc.gridx=1;
+    gbc.weightx=1;
+    panelFormulario.add(txtFechaEntrada,gbc);
+
+    gbc.gridx=2;
+    gbc.weightx=0;
+    panelFormulario.add(jLabel7,gbc);
+
+    gbc.gridx=3;
+    gbc.weightx=1;
+    panelFormulario.add(txtHoraEntrada,gbc);
+
+    fila++;
+
+    gbc.gridx=0;
+    gbc.gridy=fila;
+    gbc.weightx=0;
+    panelFormulario.add(jLabel8,gbc);
+
+    gbc.gridx=1;
+    gbc.weightx=1;
+    panelFormulario.add(txtFechaSalida,gbc);
+
+    gbc.gridx=2;
+    gbc.weightx=0;
+    panelFormulario.add(jLabel9,gbc);
+
+    gbc.gridx=3;
+    gbc.weightx=1;
+    panelFormulario.add(txtHoraSalida,gbc);
+
+    fila++;
+
+    jScrollPane1.setPreferredSize(new Dimension(280,110));
+    jScrollPane2.setPreferredSize(new Dimension(280,110));
+    jScrollPane3.setPreferredSize(new Dimension(280,110));
+    jScrollPane4.setPreferredSize(new Dimension(280,110));
+
+    gbc.gridx=0;
+    gbc.gridy=fila;
+    gbc.gridwidth=2;
+    gbc.weightx=1;
+    panelFormulario.add(jLabel10,gbc);
+
+    gbc.gridx=2;
+    panelFormulario.add(jLabel12,gbc);
+
+    fila++;
+
+    gbc.gridx=0;
+    gbc.gridy=fila;
+    gbc.gridwidth=2;
+    gbc.fill=GridBagConstraints.BOTH;
+    gbc.weightx=1;
+    gbc.weighty=1;
+    panelFormulario.add(jScrollPane1,gbc);
+
+    gbc.gridx=2;
+    panelFormulario.add(jScrollPane3,gbc);
+
+    fila++;
+
+    gbc.gridx=0;
+    gbc.gridy=fila;
+    gbc.gridwidth=2;
+    gbc.fill=GridBagConstraints.HORIZONTAL;
+    gbc.weighty=0;
+    panelFormulario.add(jLabel11,gbc);
+
+    gbc.gridx=2;
+    panelFormulario.add(jLabel13,gbc);
+
+    fila++;
+
+    gbc.gridx=0;
+    gbc.gridy=fila;
+    gbc.gridwidth=2;
+    gbc.fill=GridBagConstraints.BOTH;
+    gbc.weightx=1;
+    gbc.weighty=1;
+    panelFormulario.add(jScrollPane2,gbc);
+
+    gbc.gridx=2;
+    panelFormulario.add(jScrollPane4,gbc);
+
+    JPanel panelHistorial=new JPanel(new BorderLayout(5,5));
+    panelHistorial.setPreferredSize(new Dimension(600,600));
+    panelHistorial.add(jLabel14,BorderLayout.NORTH);
+    panelHistorial.add(panelTablaConsulta,BorderLayout.CENTER);
+
+    JPanel panelBotones=new JPanel();
+
+    panelBotones.add(btnRegistrar);
+    panelBotones.add(btnModificar);
+    panelBotones.add(btnSalida);
+    panelBotones.add(btnLimpiar);
+    panelBotones.add(btnEliminar);
+
+    jPanel1.add(panelFormulario,BorderLayout.CENTER);
+    jPanel1.add(panelHistorial,BorderLayout.EAST);
+    jPanel1.add(panelBotones,BorderLayout.SOUTH);
+
+    jPanel1.revalidate();
+    jPanel1.repaint();
+}
     
 private void configurarTabla() {
 
