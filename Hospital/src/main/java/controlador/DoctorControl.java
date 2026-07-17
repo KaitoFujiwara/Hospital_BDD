@@ -23,6 +23,21 @@ public class DoctorControl {
         apellidoM = apellidoM.trim();
         turno = turno.trim();
         especialidad = especialidad.trim();
+        
+        if(!nombreValido(nombre)) {
+            JOptionPane.showMessageDialog(null,"El nombre solo puede contener letras y espacios");
+            return false;
+        }
+
+        if(!nombreValido(apellidoP)) {
+            JOptionPane.showMessageDialog(null,"El apellido paterno solo puede contener letras");
+            return false;
+        }
+
+        if(!nombreValido(apellidoM)) {
+            JOptionPane.showMessageDialog(null,"El apellido materno solo puede contener letras");
+            return false;
+        }
 
         if (nombre.isEmpty()) {
             JOptionPane.showMessageDialog(null,"El nombre del doctor es obligatorio");
@@ -146,6 +161,21 @@ public class DoctorControl {
         apellidoM = apellidoM.trim();
         turno = turno.trim();
         especialidad = especialidad.trim();
+        
+        if(!nombreValido(nombre)) {
+            JOptionPane.showMessageDialog(null,"El nombre solo puede contener letras y espacios");
+            return false;
+        }
+
+        if(!nombreValido(apellidoP)) {
+            JOptionPane.showMessageDialog(null,"El apellido paterno solo puede contener letras");
+            return false;
+        }
+
+        if(!nombreValido(apellidoM)) {
+            JOptionPane.showMessageDialog(null,"El apellido materno solo puede contener letras");
+            return false;
+        }
 
         if (nombre.isEmpty() || apellidoP.isEmpty() || apellidoM.isEmpty()
                 || turno.isEmpty() || especialidad.isEmpty()) {
@@ -215,7 +245,11 @@ public class DoctorControl {
             return false;
         }
     }
-
+    
+    private boolean nombreValido(String texto) {
+        return texto.matches("^[\\p{L} ]+$");
+    }
+    
     public ArrayList<Doctor> verDoctores() {
         ArrayList<Doctor> listaDoctores = new ArrayList<>();
 

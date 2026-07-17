@@ -18,10 +18,26 @@ public class PacienteControl {
     }
 
     public boolean crearPaciente(String nombre,String apellidoP,String apellidoM,int edad,String genero,int peso) {
+       
         nombre=nombre.trim();
         apellidoP=apellidoP.trim();
         apellidoM=apellidoM.trim();
         genero=genero.trim();
+
+        if(!nombreValido(nombre)) {
+            JOptionPane.showMessageDialog(null,"El nombre solo puede contener letras y espacios");
+            return false;
+        }
+
+        if(!nombreValido(apellidoP)) {
+            JOptionPane.showMessageDialog(null,"El apellido paterno solo puede contener letras");
+            return false;
+        }
+
+        if(!nombreValido(apellidoM)) {
+            JOptionPane.showMessageDialog(null,"El apellido materno solo puede contener letras");
+            return false;
+        }
 
         if(nombre.isEmpty()||apellidoP.isEmpty()||apellidoM.isEmpty()||genero.isEmpty()) {
             JOptionPane.showMessageDialog(null,"Complete todos los datos del paciente");
@@ -100,6 +116,21 @@ public class PacienteControl {
         edad=edad.trim();
         genero=genero.trim();
         peso=peso.trim();
+
+        if(!nombreValido(nombre)) {
+            JOptionPane.showMessageDialog(null,"El nombre solo puede contener letras y espacios");
+            return false;
+        }
+
+        if(!nombreValido(apellidoP)) {
+            JOptionPane.showMessageDialog(null,"El apellido paterno solo puede contener letras");
+            return false;
+        }
+
+        if(!nombreValido(apellidoM)) {
+            JOptionPane.showMessageDialog(null,"El apellido materno solo puede contener letras");
+            return false;
+        }
 
         if(nombre.isEmpty()||apellidoP.isEmpty()||apellidoM.isEmpty()||edad.isEmpty()||genero.isEmpty()||peso.isEmpty()) {
             JOptionPane.showMessageDialog(null,"Complete todos los datos del paciente");
@@ -251,6 +282,10 @@ public class PacienteControl {
         }
 
         return 0;
+    }
+   
+    private boolean nombreValido(String texto) {
+        return texto.matches("^[\\p{L} ]+$");
     }
 
     private Paciente convertirPaciente(ResultSet resultado)throws SQLException {
