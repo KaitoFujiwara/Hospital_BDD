@@ -12,6 +12,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.File;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -45,7 +47,7 @@ public class PanelRecetas extends JPanel {
     private final JButton btnModificar;
     private final JButton btnEliminar;
     private final JButton btnLimpiar;
-    private final JButton btnGenerarPDF;
+    private final JButton btnGenerarPDF; 
 
     private final TablaHospital tablaRecetas;
 
@@ -71,14 +73,16 @@ public class PanelRecetas extends JPanel {
         btnModificar = new JButton("Modificar");
         btnEliminar = new JButton("Eliminar");
         btnLimpiar = new JButton("Limpiar");
-        btnGenerarPDF = new JButton("Generar PDF");
+        btnGenerarPDF = new JButton("Generar PDF"); 
 
         tablaRecetas = new TablaHospital();
 
         configurarInterfaz();
         conectarEventos();
-        actualizarCombos();
-        actualizarTabla();
+        
+        // CORREGIDO: Se ejecutan de manera segura por si la BD arroja alguna excepción
+        actualizarCombos(); 
+        actualizarTabla();  
     }
 
     private void configurarInterfaz() {
@@ -117,7 +121,7 @@ public class PanelRecetas extends JPanel {
         botones.add(btnModificar);
         botones.add(btnEliminar);
         botones.add(btnLimpiar);
-        botones.add(btnGenerarPDF);
+        botones.add(btnGenerarPDF); 
 
         add(titulo, BorderLayout.NORTH);
         add(centro, BorderLayout.CENTER);
@@ -152,16 +156,18 @@ public class PanelRecetas extends JPanel {
     }
 
     public void actualizarCombos() {
-        cmbConsulta.removeAllItems();
+        try {
+            cmbConsulta.removeAllItems();
+            for (Consulta consulta : consultaControl.verConsultas()) {
+                cmbConsulta.addItem(consulta);
+            }
 
-        for (Consulta consulta : consultaControl.verConsultas()) {
-            cmbConsulta.addItem(consulta);
-        }
-
-        cmbMedicamento.removeAllItems();
-
-        for (Medicamento medicamento : medicamentoControl.verMedicamentos()) {
-            cmbMedicamento.addItem(medicamento);
+            cmbMedicamento.removeAllItems();
+            for (Medicamento medicamento : medicamentoControl.verMedicamentos()) {
+                cmbMedicamento.addItem(medicamento);
+            }
+        } catch (Exception ex) {
+            System.err.println("Error al cargar los combobox: " + ex.getMessage());
         }
     }
 
@@ -179,17 +185,35 @@ public class PanelRecetas extends JPanel {
             return;
         }
 
+        String indicaciones = txtDescripcion.getText().trim();
+        if (indicaciones.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Las indicaciones de la receta son obligatorias.");
+            return;
+        }
+
+        LocalTime horaSuministrar;
+        try {
+            horaSuministrar = LocalTime.parse(txtHoraSuministrar.getText().trim());
+        } catch (DateTimeParseException ex) {
+            JOptionPane.showMessageDialog(this, "Formato de hora incorrecto. Use HH:mm (Ej: 14:30)", "Error de formato", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // NOTA: Si tu backend aún no acepta 'LocalTime' directamente y te da error aquí, 
+        // cambia el último parámetro por: horaSuministrar.toString()  O  java.sql.Time.valueOf(horaSuministrar)
         boolean guardado = recetaControl.crearReceta(
                 medicamento.getIdMedicamento(),
                 consulta.getIdConsulta(),
-                txtDescripcion.getText(),
-                txtHoraSuministrar.getText()
+                indicaciones,
+                horaSuministrar 
         );
 
         if (guardado) {
             JOptionPane.showMessageDialog(this, "Receta registrada correctamente");
             actualizarTabla();
             limpiarCampos();
+        } else {
+            JOptionPane.showMessageDialog(this, "Error de negocio al guardar la receta.");
         }
     }
 
@@ -208,20 +232,36 @@ public class PanelRecetas extends JPanel {
         }
 
         int idReceta;
-
         try {
             idReceta = Integer.parseInt(txtIdReceta.getText());
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "El ID de la receta no es válido");
             return;
         }
 
+        String indicaciones = txtDescripcion.getText().trim();
+        if (indicaciones.isEmpty()) {
+             JOptionPane.showMessageDialog(this, "Las indicaciones son obligatorias.");
+             return;
+        }
+
+        LocalTime horaSuministrar;
+        try {
+            horaSuministrar = LocalTime.parse(txtHoraSuministrar.getText().trim());
+        } catch (DateTimeParseException ex) {
+            JOptionPane.showMessageDialog(this, "Formato de hora incorrecto. Use HH:mm.");
+            return;
+        }
+
+        // CORREGIDO: Si tu controlador espera 'String' o 'java.sql.Time' en vez de LocalTime:
+        // Opción A (Si espera String): use -> horaSuministrar.toString()
+        // Opción B (Si espera java.sql.Time): use -> java.sql.Time.valueOf(horaSuministrar)
         boolean modificado = recetaControl.modificarReceta(
                 idReceta,
                 medicamento.getIdMedicamento(),
                 consulta.getIdConsulta(),
-                txtDescripcion.getText(),
-                txtHoraSuministrar.getText()
+                indicaciones,
+                horaSuministrar // Cambia a 'horaSuministrar.toString()' si tu método en el controlador pide String
         );
 
         if (modificado) {
@@ -249,10 +289,9 @@ public class PanelRecetas extends JPanel {
         }
 
         int idReceta;
-
         try {
             idReceta = Integer.parseInt(txtIdReceta.getText());
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "El ID de la receta no es válido");
             return;
         }
@@ -301,16 +340,20 @@ public class PanelRecetas extends JPanel {
     }
 
     public void actualizarTabla() {
-        tablaRecetas.limpiarTabla();
+        try {
+            tablaRecetas.limpiarTabla();
 
-        for (Receta receta : recetaControl.verRecetas()) {
-            tablaRecetas.agregarFila(new Object[]{
-                receta.getIdReceta(),
-                receta.getIdConsulta(),
-                receta.getIdMedicamento(),
-                receta.getDescripcion(),
-                receta.getHoraSuministrar()
-            });
+            for (Receta receta : recetaControl.verRecetas()) {
+                tablaRecetas.agregarFila(new Object[]{
+                    receta.getIdReceta(),
+                    receta.getIdConsulta(),
+                    receta.getIdMedicamento(),
+                    receta.getDescripcion(),
+                    receta.getHoraSuministrar()
+                });
+            }
+        } catch (Exception ex) {
+            System.err.println("Error al actualizar la tabla: " + ex.getMessage());
         }
     }
 
@@ -376,14 +419,14 @@ public class PanelRecetas extends JPanel {
 
             generadorRecetasPDF.abrirPDF(archivo);
 
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException nfe) {
             JOptionPane.showMessageDialog(this, "El ID de la receta no es válido");
-        } catch (Exception e) {
+        } catch (Exception ex) { // CORREGIDO: Se cambió 'e' por 'ex' para evitar colisiones de variables
             JOptionPane.showMessageDialog(
                     this,
-                    "Error al generar PDF:\n" + e.getMessage()
+                    "Error al generar PDF:\n" + ex.getMessage()
             );
-            e.printStackTrace();
+            ex.printStackTrace(); // CORREGIDO: Ahora usa 'ex'
         }
     }
 

@@ -15,67 +15,19 @@ public class PacienteControl {
     }
 
     public boolean crearPaciente(String nombre, String apellidoP,
-            String apellidoM, String edad, String genero, String peso) {
+        String apellidoM, int edad, String genero, int peso) {
 
         nombre = nombre.trim();
         apellidoP = apellidoP.trim();
         apellidoM = apellidoM.trim();
-        edad = edad.trim();
         genero = genero.trim();
-        peso = peso.trim();
 
-        if (nombre.isEmpty()) {
-            JOptionPane.showMessageDialog(null,
-                    "El nombre es obligatorio");
-            return false;
+        if (nombre.isEmpty() || apellidoP.isEmpty() || apellidoM.isEmpty() || genero.isEmpty()) {
+            return false; // La vista se encargará de avisar que faltan campos
         }
 
-        if (apellidoP.isEmpty()) {
-            JOptionPane.showMessageDialog(null,
-                    "El apellido paterno es obligatorio");
-            return false;
-        }
-
-        if (apellidoM.isEmpty()) {
-            JOptionPane.showMessageDialog(null,
-                    "El apellido materno es obligatorio");
-            return false;
-        }
-
-        if (genero.isEmpty()) {
-            JOptionPane.showMessageDialog(null,
-                    "El género es obligatorio");
-            return false;
-        }
-
-        int edadConvertida;
-        int pesoConvertido;
-
-        try {
-            edadConvertida = Integer.parseInt(edad);
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null,
-                    "La edad debe ser un número entero");
-            return false;
-        }
-
-        try {
-            pesoConvertido = Integer.parseInt(peso);
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null,
-                    "El peso debe ser un número entero");
-            return false;
-        }
-
-        if (edadConvertida <= 0 || edadConvertida > 120) {
-            JOptionPane.showMessageDialog(null,
-                    "La edad no es válida");
-            return false;
-        }
-
-        if (pesoConvertido <= 0 || pesoConvertido > 500) {
-            JOptionPane.showMessageDialog(null,
-                    "El peso no es válido");
+        // Validación de lógica de negocio (los límites de edad/peso del hospital)
+        if (edad <= 0 || edad > 120 || peso <= 0 || peso > 500) {
             return false;
         }
 
@@ -84,9 +36,9 @@ public class PacienteControl {
                 nombre,
                 apellidoP,
                 apellidoM,
-                edadConvertida,
+                edad,
                 genero,
-                pesoConvertido
+                peso
         );
 
         listaPacientes.add(paciente);

@@ -1,4 +1,3 @@
-
 package vista;
 import componentes.TablaHospital;
 import controlador.PacienteControl;
@@ -11,161 +10,204 @@ public class PanelPaciente extends javax.swing.JPanel {
     private TablaHospital tablaPacientes;
     
     public PanelPaciente(PacienteControl pacienteControl) {
-    initComponents();
-    this.pacienteControl = pacienteControl;
-    configurarTabla();
-    conectarEventos();
-    actualizarTabla();
-}
+        initComponents();
+        this.pacienteControl = pacienteControl;
+        configurarTabla();
+        conectarEventos();
+        actualizarTabla();
+    }
     
     private void configurarTabla() {
-    tablaPacientes = new TablaHospital();
-    tablaPacientes.establecerColumnas(new String[]{"ID", "Nombre", "Apellido paterno", "Apellido materno", "Edad", "Género", "Peso"});
-    panelTabla.setLayout(new BorderLayout());
-    panelTabla.add(new javax.swing.JScrollPane(tablaPacientes), BorderLayout.CENTER);
-    panelTabla.revalidate();
-    panelTabla.repaint();
-}
+        tablaPacientes = new TablaHospital();
+        tablaPacientes.establecerColumnas(new String[]{"ID", "Nombre", "Apellido paterno", "Apellido materno", "Edad", "Género", "Peso"});
+        panelTabla.setLayout(new BorderLayout());
+        panelTabla.add(new javax.swing.JScrollPane(tablaPacientes), BorderLayout.CENTER);
+        panelTabla.revalidate();
+        panelTabla.repaint();
+    }
 
     private void conectarEventos() {
+        // btnGuardar ya tiene su listener en initComponents() apuntando a btnGuardarActionPerformed.
+        btnModificar.addActionListener(e -> modificarPaciente());
+        btnEliminar.addActionListener(e -> eliminarPaciente());
+        btnLimpiar.addActionListener(e -> limpiarCampos());
 
-    btnGuardar.addActionListener(e -> guardarPaciente());
-    btnModificar.addActionListener(e -> modificarPaciente());
-    btnEliminar.addActionListener(e -> eliminarPaciente());
-    btnLimpiar.addActionListener(e -> limpiarCampos());
-
-    tablaPacientes.getSelectionModel().addListSelectionListener(e -> {
-                if (!e.getValueIsAdjusting()) { cargarPacienteSeleccionado();}
-            });
-}
-    
-    private void guardarPaciente() {
-    if (cmbGenero.getSelectedItem() == null) {
-    JOptionPane.showMessageDialog(this, "Seleccione un género");
-    return;
-}
-String genero = cmbGenero.getSelectedItem().toString();
-
-    if (genero.equals("Selecione")) {JOptionPane.showMessageDialog(this, "Seleccione un género");
-    return;
-}
-    boolean guardado = pacienteControl.crearPaciente(txtNombre.getText(), txtApellidoP.getText(),txtApellidoM.getText(),txtEdad.getText(),genero,txtPeso.getText());
-    if (guardado) {JOptionPane.showMessageDialog(this,"Paciente registrado correctamente");
-
-        actualizarTabla();
-        limpiarCampos();
-    }
-}
-    
-    public void actualizarTabla() {
-    tablaPacientes.limpiarTabla();
-    for (Paciente paciente : pacienteControl.verPacientes()) {
-
-        tablaPacientes.agregarFila(new Object[]{
-            paciente.getIdPaciente(),
-            paciente.getNombre(),
-            paciente.getApellidoP(),
-            paciente.getApellidoM(),
-            paciente.getEdad(),
-            paciente.getGenero(),
-            paciente.getPeso()
+        tablaPacientes.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) { cargarPacienteSeleccionado(); }
         });
     }
-}
+    
+    private void guardarPaciente() {
+        if (cmbGenero.getSelectedItem() == null) {
+            JOptionPane.showMessageDialog(this, "Seleccione un género");
+            return;
+        }
+        
+        String genero = cmbGenero.getSelectedItem().toString();
+        if (genero.equals("Seleccione") || genero.equals("Selecione")) {
+            JOptionPane.showMessageDialog(this, "Seleccione un género válido");
+            return;
+        }
+
+        String nombre = txtNombre.getText().trim();
+        String apeP = txtApellidoP.getText().trim();
+        String apeM = txtApellidoM.getText().trim();
+        
+        if (nombre.isEmpty() || apeP.isEmpty() || apeM.isEmpty() 
+                || txtEdad.getText().trim().isEmpty() || txtPeso.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Campos Vacíos", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Se inicializan con un valor por defecto para evitar problemas de compilación
+        int edad = 0;
+        int peso = 0;
+
+        try {
+            edad = Integer.parseInt(txtEdad.getText().trim());
+            peso = Integer.parseInt(txtPeso.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "La edad y el peso deben ser números enteros válidos.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+            return; 
+        }
+
+        boolean guardado = pacienteControl.crearPaciente(nombre, apeP, apeM, edad, genero, peso);
+        
+        if (guardado) {
+            JOptionPane.showMessageDialog(this, "Paciente registrado correctamente");
+            actualizarTabla();
+            limpiarCampos();
+        } else {
+            JOptionPane.showMessageDialog(this, "No se pudo registrar. Verifique que la edad (1-120) y peso (1-500) sean lógicos.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    public void actualizarTabla() {
+        tablaPacientes.limpiarTabla();
+        for (Paciente paciente : pacienteControl.verPacientes()) {
+            tablaPacientes.agregarFila(new Object[]{
+                paciente.getIdPaciente(),
+                paciente.getNombre(),
+                paciente.getApellidoP(),
+                paciente.getApellidoM(),
+                paciente.getEdad(),
+                paciente.getGenero(),
+                paciente.getPeso()
+            });
+        }
+    }
     
     private void cargarPacienteSeleccionado() {
-    int fila = tablaPacientes.getSelectedRow();
-    if (fila == -1) {
-        return;
+        int fila = tablaPacientes.getSelectedRow();
+        if (fila == -1) {
+            return;
+        }
+        txtIdPaciente.setText(tablaPacientes.getValueAt(fila, 0).toString());
+        txtNombre.setText(tablaPacientes.getValueAt(fila, 1).toString());
+        txtApellidoP.setText(tablaPacientes.getValueAt(fila, 2).toString());
+        txtApellidoM.setText(tablaPacientes.getValueAt(fila, 3).toString());
+        txtEdad.setText(tablaPacientes.getValueAt(fila, 4).toString());
+        cmbGenero.setSelectedItem(tablaPacientes.getValueAt(fila, 5).toString());
+        txtPeso.setText(tablaPacientes.getValueAt(fila, 6).toString());
     }
-    txtIdPaciente.setText( tablaPacientes.getValueAt(fila, 0).toString());
-    txtNombre.setText(tablaPacientes.getValueAt(fila, 1).toString());
-    txtApellidoP.setText(tablaPacientes.getValueAt(fila, 2).toString());
-    txtApellidoM.setText(tablaPacientes.getValueAt(fila, 3).toString());
-    txtEdad.setText(tablaPacientes.getValueAt(fila, 4).toString());
-    cmbGenero.setSelectedItem( tablaPacientes.getValueAt(fila, 5).toString() );
-    txtPeso.setText(tablaPacientes.getValueAt(fila, 6).toString());
-}
-       
+        
     private void modificarPaciente() {
+        if (txtIdPaciente.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Seleccione un paciente de la tabla");
+            return;
+        }
+        
+        int idPaciente = Integer.parseInt(txtIdPaciente.getText());
+        String nombre = txtNombre.getText().trim();
+        String apeP = txtApellidoP.getText().trim();
+        String apeM = txtApellidoM.getText().trim();
+        String genero = cmbGenero.getSelectedItem() != null ? cmbGenero.getSelectedItem().toString() : "";
+        
+        if (nombre.isEmpty() || apeP.isEmpty() || apeM.isEmpty() || genero.equals("Seleccione")) {
+            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.");
+            return;
+        }
 
-    if (txtIdPaciente.getText().isEmpty()) {
-        JOptionPane.showMessageDialog(this,"Seleccione un paciente de la tabla");
-        return;
-    }
-    int idPaciente =Integer.parseInt(txtIdPaciente.getText());
-    boolean modificado = pacienteControl.modificarPaciente(
+        // CORRECCIÓN AQUÍ: Inicializar las variables para que el compilador no marque error
+        int edad = 0;
+        int peso = 0;
+        String edadS;
+        String pesoS;
+
+        try {
+            edad = Integer.parseInt(txtEdad.getText().trim());
+            peso = Integer.parseInt(txtPeso.getText().trim());
+            edadS= "" + edad + "";
+            pesoS = "" + peso + "";
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Edad y peso deben ser números válidos.");
+            return;
+        }
+
+        boolean modificado = pacienteControl.modificarPaciente(
                     idPaciente,
-                    txtNombre.getText(),
-                    txtApellidoP.getText(),
-                    txtApellidoM.getText(),
-                    txtEdad.getText(),
-                    cmbGenero.getSelectedItem().toString(),
-                    txtPeso.getText()
-            );
-    if (modificado) {
-        JOptionPane.showMessageDialog(this,"Paciente modificado correctamente");
-        actualizarTabla();
-        limpiarCampos();
+                    nombre,
+                    apeP,
+                    apeM,
+                    edadS,
+                    genero,
+                    pesoS
+                );
+                
+        if (modificado) {
+            JOptionPane.showMessageDialog(this, "Paciente modificado correctamente");
+            actualizarTabla();
+            limpiarCampos();
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al modificar. Verifique los rangos de edad y peso.");
+        }
     }
-}
     
     private void eliminarPaciente() {
+        if (txtIdPaciente.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Seleccione un paciente");
+            return;
+        }
 
-    if (txtIdPaciente.getText().isEmpty()) {
-
-        JOptionPane.showMessageDialog(
+        int respuesta = JOptionPane.showConfirmDialog(
                 this,
-                "Seleccione un paciente"
+                "¿Desea eliminar el paciente?",
+                "Confirmar",
+                JOptionPane.YES_NO_OPTION
         );
 
-        return;
+        if (respuesta != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        int idPaciente = Integer.parseInt(txtIdPaciente.getText());
+        boolean eliminado = pacienteControl.eliminarPaciente(idPaciente);
+
+        if (eliminado) {
+            JOptionPane.showMessageDialog(this, "Paciente eliminado");
+            actualizarTabla();
+            limpiarCampos();
+        }
     }
-
-    int respuesta = JOptionPane.showConfirmDialog(
-            this,
-            "¿Desea eliminar el paciente?",
-            "Confirmar",
-            JOptionPane.YES_NO_OPTION
-    );
-
-    if (respuesta != JOptionPane.YES_OPTION) {
-        return;
-    }
-
-    int idPaciente =
-            Integer.parseInt(txtIdPaciente.getText());
-
-    boolean eliminado =
-            pacienteControl.eliminarPaciente(idPaciente);
-
-    if (eliminado) {
-
-        JOptionPane.showMessageDialog(
-                this,
-                "Paciente eliminado"
-        );
-
-        actualizarTabla();
-        limpiarCampos();
-    }
-}
     
     private void limpiarCampos() {
+        txtIdPaciente.setText("");
+        txtNombre.setText("");
+        txtApellidoP.setText("");
+        txtApellidoM.setText("");
+        txtEdad.setText("");
+        cmbGenero.setSelectedIndex(0);
+        txtPeso.setText("");
 
-    txtIdPaciente.setText("");
-    txtNombre.setText("");
-    txtApellidoP.setText("");
-    txtApellidoM.setText("");
-    txtEdad.setText("");
-    cmbGenero.setSelectedIndex(0);
-    txtPeso.setText("");
-
-    tablaPacientes.clearSelection();
-    txtNombre.requestFocus();
-}
+        tablaPacientes.clearSelection();
+        txtNombre.requestFocus();
+    }
     
-    @SuppressWarnings("unchecked")
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {                                           
+        guardarPaciente();
+    }                                          
+
+
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -218,6 +260,7 @@ String genero = cmbGenero.getSelectedItem().toString();
         jLabel8.setText("Peso :");
 
         btnGuardar.setText("Guardar");
+        btnGuardar.addActionListener(this::btnGuardarActionPerformed);
 
         btnModificar.setText("Modificar");
 
@@ -243,9 +286,9 @@ String genero = cmbGenero.getSelectedItem().toString();
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap(37, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addContainerGap(46, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(jLabel7)
                                     .addComponent(jLabel6)
@@ -281,7 +324,7 @@ String genero = cmbGenero.getSelectedItem().toString();
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(0, 30, Short.MAX_VALUE)
                         .addComponent(panelTabla, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 57, Short.MAX_VALUE))
+                .addGap(0, 47, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -327,7 +370,11 @@ String genero = cmbGenero.getSelectedItem().toString();
 
         add(jPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
-
+/*
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        
+    }//GEN-LAST:event_btnGuardarActionPerformed
+*/
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEliminar;
@@ -352,4 +399,5 @@ String genero = cmbGenero.getSelectedItem().toString();
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtPeso;
     // End of variables declaration//GEN-END:variables
+
 }

@@ -21,57 +21,35 @@ public class RecetaControl {
         siguienteId = 1;
     }
 
-    public boolean crearReceta(int idMedicamento,
-            int idConsulta, String descripcion,
-            String horaSuministrar) {
+    public boolean crearReceta(int idMedicamento, int idConsulta, 
+        String descripcion, LocalTime horaSuministrar) {
 
-        if (medicamentoControl.buscarMedicamento(
-                idMedicamento) == null) {
-
-            JOptionPane.showMessageDialog(null,
-                    "El medicamento seleccionado no existe");
-            return false;
-        }
-
-        if (consultaControl.buscarConsulta(idConsulta) == null) {
-            JOptionPane.showMessageDialog(null,
-                    "La consulta seleccionada no existe");
-            return false;
-        }
-
-        descripcion = descripcion.trim();
-        horaSuministrar = horaSuministrar.trim();
-
-        if (descripcion.isEmpty()) {
-            JOptionPane.showMessageDialog(null,
-                    "La descripción es obligatoria");
-            return false;
-        }
-
-        LocalTime horaConvertida;
-
-        try {
-            horaConvertida =
-                    LocalTime.parse(horaSuministrar);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null,
-                    "La hora debe tener el formato HH:mm");
-            return false;
-        }
-
-        Receta receta = new Receta(
-                siguienteId,
-                idMedicamento,
-                idConsulta,
-                descripcion,
-                horaConvertida
-        );
-
-        listaRecetas.add(receta);
-        siguienteId++;
-
-        return true;
+    if (medicamentoControl.buscarMedicamento(idMedicamento) == null) {
+        return false; // El negocio dice: no se puede recetar algo que no existe
     }
+
+    if (consultaControl.buscarConsulta(idConsulta) == null) {
+        return false;
+    }
+
+    descripcion = descripcion.trim();
+    if (descripcion.isEmpty()) {
+        return false;
+    }
+
+    Receta receta = new Receta(
+            siguienteId,
+            idMedicamento,
+            idConsulta,
+            descripcion,
+            horaSuministrar
+    );
+
+    listaRecetas.add(receta);
+    siguienteId++;
+
+    return true;
+}
 
     public Receta buscarReceta(int idReceta) {
 
