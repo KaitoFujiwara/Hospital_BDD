@@ -1,13 +1,24 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package conexion;
 
-/**
- *
- * @author KENNEDY
- */
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 public class ConexionBD {
-    
+
+    String url = "jdbc:postgresql://localhost:5432/Hospital?currentSchema=Proyecto";
+    String usuario = "postgres";
+    String contrasena = "Segamonika1!";
+
+    public Connection conectar() {
+
+        try {
+            Connection conexion =DriverManager.getConnection(url, usuario, contrasena);
+            System.out.println("Conexión exitosa");
+            return conexion;
+        } catch (SQLException e) {
+            System.out.println("Error al conectar: " + e.getMessage());
+            return null;
+        }
+    }
 }

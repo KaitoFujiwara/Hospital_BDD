@@ -1,154 +1,230 @@
-
 package controlador;
 
+import conexion.ConexionBD;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import modelo.Medicamento;
 
 public class MedicamentoControl {
 
-    private final ArrayList<Medicamento> listaMedicamentos;
-    private int siguienteId;
+    private ConexionBD conexionBD;
 
     public MedicamentoControl() {
-        listaMedicamentos = new ArrayList<>();
-        siguienteId = 1;
+        conexionBD=new ConexionBD();
     }
 
-    public boolean crearMedicamento(String nombreMedicamento,
-            String dosis, String descripcion) {
+    public boolean crearMedicamento(String nombreMedicamento,String dosis,String descripcion) {
+        nombreMedicamento=nombreMedicamento.trim();
+        dosis=dosis.trim();
+        descripcion=descripcion.trim();
 
-        nombreMedicamento = nombreMedicamento.trim();
-        dosis = dosis.trim();
-        descripcion = descripcion.trim();
-
-        if (nombreMedicamento.isEmpty()) {
-            JOptionPane.showMessageDialog(null,
-                    "El nombre del medicamento es obligatorio");
+        if(nombreMedicamento.isEmpty()) {
+            JOptionPane.showMessageDialog(null,"El nombre del medicamento es obligatorio");
             return false;
         }
 
-        if (dosis.isEmpty()) {
-            JOptionPane.showMessageDialog(null,
-                    "La dosis es obligatoria");
+        if(dosis.isEmpty()) {
+            JOptionPane.showMessageDialog(null,"La dosis es obligatoria");
             return false;
         }
 
-        if (descripcion.isEmpty()) {
-            JOptionPane.showMessageDialog(null,
-                    "La descripción es obligatoria");
+        if(descripcion.isEmpty()) {
+            JOptionPane.showMessageDialog(null,"La descripción es obligatoria");
             return false;
         }
 
-        int dosisConvertida;
+        String sql="INSERT INTO \"Proyecto\".\"Medicamento\" "
+                +"(\"nombreMedicamento\",\"descripcion\",\"dosis\") "
+                +"VALUES(?,?,?)";
 
-        try {
-            dosisConvertida = Integer.parseInt(dosis);
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null,
-                    "La dosis debe ser un número entero");
+        Connection conexion=conexionBD.conectar();
+
+        if(conexion==null) {
+            JOptionPane.showMessageDialog(null,"No fue posible conectar con la base de datos");
             return false;
         }
 
-        if (dosisConvertida <= 0) {
-            JOptionPane.showMessageDialog(null,
-                    "La dosis debe ser mayor que cero");
+        try(conexion;PreparedStatement sentencia=conexion.prepareStatement(sql)) {
+            sentencia.setString(1,nombreMedicamento);
+            sentencia.setString(2,descripcion);
+            sentencia.setString(3,dosis);
+
+            return sentencia.executeUpdate()>0;
+
+        }catch(SQLException e) {
+            JOptionPane.showMessageDialog(null,"Error al registrar medicamento:\n"+e.getMessage());
             return false;
         }
-
-        Medicamento medicamento = new Medicamento(
-                siguienteId,
-                nombreMedicamento,
-                dosisConvertida,
-                descripcion
-        );
-
-        listaMedicamentos.add(medicamento);
-        siguienteId++;
-
-        return true;
     }
 
     public Medicamento buscarMedicamento(int idMedicamento) {
+        String sql="SELECT \"id_Medicamento\",\"nombreMedicamento\",\"descripcion\",\"dosis\" "
+                +"FROM \"Proyecto\".\"Medicamento\" "
+                +"WHERE \"id_Medicamento\"=?";
 
-        for (Medicamento medicamento : listaMedicamentos) {
-            if (medicamento.getIdMedicamento() == idMedicamento) {
-                return medicamento;
+        Connection conexion=conexionBD.conectar();
+
+        if(conexion==null) {
+            return null;
+        }
+
+        try(conexion;PreparedStatement sentencia=conexion.prepareStatement(sql)) {
+            sentencia.setInt(1,idMedicamento);
+
+            try(ResultSet resultado=sentencia.executeQuery()) {
+                if(resultado.next()) {
+                    return new Medicamento(
+                            resultado.getInt("id_Medicamento"),
+                            resultado.getString("nombreMedicamento"),
+                            resultado.getString("dosis"),
+                            resultado.getString("descripcion")
+                    );
+                }
             }
+
+        }catch(SQLException e) {
+            JOptionPane.showMessageDialog(null,"Error al buscar medicamento:\n"+e.getMessage());
         }
 
         return null;
     }
 
-    public boolean modificarMedicamento(int idMedicamento,
-            String nombreMedicamento, String dosis,
-            String descripcion) {
+    public boolean modificarMedicamento(int idMedicamento,String nombreMedicamento,String dosis,String descripcion) {
+        nombreMedicamento=nombreMedicamento.trim();
+        dosis=dosis.trim();
+        descripcion=descripcion.trim();
 
-        Medicamento medicamento =
-                buscarMedicamento(idMedicamento);
-
-        if (medicamento == null) {
-            JOptionPane.showMessageDialog(null,
-                    "No se encontró el medicamento");
+        if(nombreMedicamento.isEmpty()||dosis.isEmpty()||descripcion.isEmpty()) {
+            JOptionPane.showMessageDialog(null,"Complete todos los datos del medicamento");
             return false;
         }
 
-        nombreMedicamento = nombreMedicamento.trim();
-        dosis = dosis.trim();
-        descripcion = descripcion.trim();
+        String sql="UPDATE \"Proyecto\".\"Medicamento\" SET "
+                +"\"nombreMedicamento\"=?,"
+                +"\"descripcion\"=?,"
+                +"\"dosis\"=? "
+                +"WHERE \"id_Medicamento\"=?";
 
-        if (nombreMedicamento.isEmpty()
-                || dosis.isEmpty()
-                || descripcion.isEmpty()) {
+        Connection conexion=conexionBD.conectar();
 
-            JOptionPane.showMessageDialog(null,
-                    "Complete todos los datos del medicamento");
+        if(conexion==null) {
+            JOptionPane.showMessageDialog(null,"No fue posible conectar con la base de datos");
             return false;
         }
 
-        int dosisConvertida;
+        try(conexion;PreparedStatement sentencia=conexion.prepareStatement(sql)) {
+            sentencia.setString(1,nombreMedicamento);
+            sentencia.setString(2,descripcion);
+            sentencia.setString(3,dosis);
+            sentencia.setInt(4,idMedicamento);
 
-        try {
-            dosisConvertida = Integer.parseInt(dosis);
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null,
-                    "La dosis debe ser un número entero");
+            int filas=sentencia.executeUpdate();
+
+            if(filas==0) {
+                JOptionPane.showMessageDialog(null,"No se encontró el medicamento");
+                return false;
+            }
+
+            return true;
+
+        }catch(SQLException e) {
+            JOptionPane.showMessageDialog(null,"Error al modificar medicamento:\n"+e.getMessage());
             return false;
         }
-
-        if (dosisConvertida <= 0) {
-            JOptionPane.showMessageDialog(null,
-                    "La dosis debe ser mayor que cero");
-            return false;
-        }
-
-        medicamento.setNombreMedicamento(nombreMedicamento);
-        medicamento.setDosis(dosisConvertida);
-        medicamento.setDescripcion(descripcion);
-
-        return true;
     }
 
     public boolean eliminarMedicamento(int idMedicamento) {
+        String sql="DELETE FROM \"Proyecto\".\"Medicamento\" "
+                +"WHERE \"id_Medicamento\"=?";
 
-        Medicamento medicamento =
-                buscarMedicamento(idMedicamento);
+        Connection conexion=conexionBD.conectar();
 
-        if (medicamento == null) {
-            JOptionPane.showMessageDialog(null,
-                    "No se encontró el medicamento");
+        if(conexion==null) {
+            JOptionPane.showMessageDialog(null,"No fue posible conectar con la base de datos");
             return false;
         }
 
-        listaMedicamentos.remove(medicamento);
-        return true;
+        try(conexion;PreparedStatement sentencia=conexion.prepareStatement(sql)) {
+            sentencia.setInt(1,idMedicamento);
+
+            int filas=sentencia.executeUpdate();
+
+            if(filas==0) {
+                JOptionPane.showMessageDialog(null,"No se encontró el medicamento");
+                return false;
+            }
+
+            return true;
+
+        }catch(SQLException e) {
+            JOptionPane.showMessageDialog(null,
+                    "No se pudo eliminar el medicamento.\n"
+                    +"Puede estar relacionado con una receta.\n\n"
+                    +e.getMessage());
+            return false;
+        }
     }
 
     public ArrayList<Medicamento> verMedicamentos() {
+        ArrayList<Medicamento> listaMedicamentos=new ArrayList<>();
+
+        String sql="SELECT \"id_Medicamento\",\"nombreMedicamento\",\"descripcion\",\"dosis\" "
+                +"FROM \"Proyecto\".\"Medicamento\" "
+                +"ORDER BY \"id_Medicamento\"";
+
+        Connection conexion=conexionBD.conectar();
+
+        if(conexion==null) {
+            return listaMedicamentos;
+        }
+
+        try(conexion;
+            PreparedStatement sentencia=conexion.prepareStatement(sql);
+            ResultSet resultado=sentencia.executeQuery()) {
+
+            while(resultado.next()) {
+                Medicamento medicamento=new Medicamento(
+                        resultado.getInt("id_Medicamento"),
+                        resultado.getString("nombreMedicamento"),
+                        resultado.getString("dosis"),
+                        resultado.getString("descripcion")
+                );
+
+                listaMedicamentos.add(medicamento);
+            }
+
+        }catch(SQLException e) {
+            JOptionPane.showMessageDialog(null,"Error al consultar medicamentos:\n"+e.getMessage());
+        }
+
         return listaMedicamentos;
     }
 
     public int cantidadMedicamentos() {
-        return listaMedicamentos.size();
+        String sql="SELECT COUNT(*) AS cantidad FROM \"Proyecto\".\"Medicamento\"";
+
+        Connection conexion=conexionBD.conectar();
+
+        if(conexion==null) {
+            return 0;
+        }
+
+        try(conexion;
+            PreparedStatement sentencia=conexion.prepareStatement(sql);
+            ResultSet resultado=sentencia.executeQuery()) {
+
+            if(resultado.next()) {
+                return resultado.getInt("cantidad");
+            }
+
+        }catch(SQLException e) {
+            JOptionPane.showMessageDialog(null,"Error al contar medicamentos:\n"+e.getMessage());
+        }
+
+        return 0;
     }
 }
